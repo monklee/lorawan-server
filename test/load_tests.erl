@@ -1,5 +1,5 @@
 %
-% Copyright (c) 2016-2018 Petr Gotthard <petr.gotthard@centrum.cz>
+% Copyright (c) 2016-2017 Petr Gotthard <petr.gotthard@centrum.cz>
 % All rights reserved.
 % Distributed under the terms of the MIT License. See the LICENSE file.
 %
@@ -10,8 +10,6 @@
 -define(NODES_PER_GW, 5).
 -define(FRAMES_PER_NODE, 5).
 
--define(NET, <<"testnet">>).
--define(PROF, <<"testprof">>).
 -define(NWKSKEY, <<"2B7E151628AED2A6ABF7158809CF4F3C">>).
 -define(APPSKEY, <<"2B7E151628AED2A6ABF7158809CF4F3C">>).
 
@@ -32,15 +30,13 @@ load_test_() ->
                         {ID, Gateway}
                     end,
                     lists:seq(1,?GW_COUNT)),
-            test_admin:add_network(?NET),
-            test_admin:add_profile(?NET, ?PROF),
             Nodes =
                 lists:foldl(
                     fun({ID1, Gateway}, Acc) ->
                         lists:foldl(
                             fun(ID2, Acc2) ->
                                 NodeCfg = {<<0,0,ID1,ID2>>, ?NWKSKEY, ?APPSKEY},
-                                test_admin:add_node(?PROF, NodeCfg),
+                                test_admin:add_node(NodeCfg),
                                 {ok, Node} = test_mote:start_link(NodeCfg, Gateway),
                                 [Node | Acc2]
                             end,
